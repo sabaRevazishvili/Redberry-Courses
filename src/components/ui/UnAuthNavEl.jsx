@@ -15,12 +15,12 @@ const UnAuthNavEl = () => {
         </Link>
       </li>
       <li>
-        <button className="border-2 border-primary rounded-2xl text-xl px-4 py-2 ">
+        <button className="border-2 border-primary text-primary rounded-lg text-xl px-4 py-2 ">
           Log In
         </button>
       </li>
       <li>
-        <button className="border-2 border-primary bg-primary rounded-2xl text-xl px-4 py-2 text-white ">
+        <button className="border-2 border-primary bg-primary rounded-lg text-xl px-4 py-2 text-white ">
           Sign Up
         </button>
       </li>
