@@ -1,11 +1,14 @@
-import React from 'react'
+import React from "react";
+import { CourseFilters } from "../components/CourseFilters";
+import { CoursesInfo } from "../components/CoursesInfo";
 
 const Courses = () => {
   return (
-    <div>
-      
-    </div>
-  )
-}
+    <main className="px-44 bg-navigation flex -flex-row">
+      <CourseFilters />
+      <CoursesInfo />
+    </main>
+  );
+};
 
-export default Courses
+export default Courses;
