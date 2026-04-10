@@ -1,5 +1,5 @@
 import React from "react";
-import avatar from "../../assets/icons/avatar.png";
+import avatar from "../../assets/icons/Avatar.png";
 import browse from "../../assets/icons/browse.png";
 import enrolled from "../../assets/icons/enrolled.png";
 import { Link } from "react-router-dom";
