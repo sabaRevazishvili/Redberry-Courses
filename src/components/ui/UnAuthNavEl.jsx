@@ -2,7 +2,7 @@ import React from "react";
 import browse from "../../assets/icons/browse.png";
 import { Link } from "react-router-dom";
 
-const UnAuthNavEl = () => {
+const UnAuthNavEl = ({ onSignUp, onLogIn }) => {
   return (
     <ul className="flex flex-row justify-center items-center gap-5">
       <li>
@@ -15,12 +15,18 @@ const UnAuthNavEl = () => {
         </Link>
       </li>
       <li>
-        <button className="border-2 border-primary text-primary rounded-lg text-xl px-4 py-2 ">
+        <button
+          onClick={onLogIn}
+          className="border-2 border-primary text-primary rounded-lg text-xl px-4 py-2 "
+        >
           Log In
         </button>
       </li>
       <li>
-        <button className="border-2 border-primary bg-primary rounded-lg text-xl px-4 py-2 text-white ">
+        <button
+          onClick={onSignUp}
+          className="border-2 border-primary bg-primary rounded-lg text-xl px-4 py-2 text-white"
+        >
           Sign Up
         </button>
       </li>
