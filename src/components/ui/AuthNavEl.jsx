@@ -4,7 +4,7 @@ import browse from "../../assets/icons/browse.png";
 import enrolled from "../../assets/icons/enrolled.png";
 import { Link } from "react-router-dom";
 
-const AuthNavEl = () => {
+const AuthNavEl = ({ onProfileClick }) => {
   return (
     <ul className="flex flex-row justify-center items-center gap-7.5">
       <li>
@@ -26,7 +26,9 @@ const AuthNavEl = () => {
         </Link>
       </li>
       <li>
-        <img className="w-15 aspect-square" src={avatar} />
+        <button onClick={onProfileClick}>
+          <img className="w-15 aspect-square" src={avatar} />
+        </button>
       </li>
     </ul>
   );
