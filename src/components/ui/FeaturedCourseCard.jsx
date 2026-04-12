@@ -1,7 +1,11 @@
 import React from "react";
 import star from "../../assets/icons/star.png";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const FeaturedCourseCard = ({ course }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-1/3 p-5 bg-white rounded-xl flex flex-col gap-4 ">
       <img className="rounded-xl h-65 object-cover" src={course.image} />
@@ -21,7 +25,10 @@ const FeaturedCourseCard = ({ course }) => {
           Starting From:{" "}
           <span className="text-3xl text-black">${course.basePrice}</span>
         </p>
-        <button className="text-xl text-white font-medium py-3 px-6 bg-primary rounded-lg">
+        <button
+          onClick={() => navigate(`/CourseDetails/${course.id}`)}
+          className="text-xl text-white font-medium py-3 px-6 bg-primary rounded-lg"
+        >
           Details
         </button>
       </div>
