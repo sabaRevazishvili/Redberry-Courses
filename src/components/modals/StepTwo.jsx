@@ -5,7 +5,7 @@ const StepTwo = ({ formData, onNext }) => {
     e.preventDefault();
     const data = new window.FormData(e.target);
     formData.set("password", data.get("password"));
-    // Usually, you don't need to save 'confirmPassword' to the final FormData
+    formData.set("password_confirmation", data.get("password_confirmation"));
     onNext();
   };
 
@@ -22,7 +22,7 @@ const StepTwo = ({ formData, onNext }) => {
 
       <label className="font-medium text-sm">Confirm Password*</label>
       <input
-        name="confirmPassword"
+        name="password_confirmation"
         type="password"
         placeholder="********"
         required

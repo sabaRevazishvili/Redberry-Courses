@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import CourseDescription from "../components/CourseDescription";
 import CourseEnrolledInfo from "../components/CourseEnrolledInfo";
 import arrow from "../assets/icons/arrow-down.png";
+import EnrolledCourseStatus from "../components/ui/EnrolledCourseStatus";
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -38,11 +39,8 @@ const CourseDetails = () => {
 
     fetchCourse();
   }, [id]);
-  console.log(info);
-  console.log(error, loading);
   if (loading) return <div className="p-44 text-white">Loading...</div>;
   if (error) return <div className="p-44 text-red-500">Error: {error}</div>;
-
   if (!info) return null;
   return (
     <main className="px-44 bg-navigation flex flex-col items-start ">
@@ -56,7 +54,11 @@ const CourseDetails = () => {
       </div>
       <div className="flex flex-row gap-33">
         <CourseDescription details={info} />
-        <CourseEnrolledInfo details={info} />
+        {info.enrollment ? (
+          <EnrolledCourseStatus enrollment={info.enrollment} />
+        ) : (
+          <CourseEnrolledInfo details={info} />
+        )}
       </div>
     </main>
   );

@@ -1,11 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
 import closeBttn from "../../assets/icons/x.png";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { LOGIN } from "../../context/actions";
 
 const LogInModal = ({ onClose = () => {} }) => {
+  const { dispatch } = useAuthContext();
+  const [, setErrors] = useState({});
+
+  const URL = "https://api.redclass.redberryinternship.ge/api/login";
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    onClose();
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        email: e.target.email.value,
+        password: e.target.password.value,
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then((err) => {
+            console.log("Validation Failed:", err.errors);
+            setErrors(err.errors || { general: err.message });
+            throw new Error("Validation failed");
+          });
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Success!", data);
+
+        localStorage.setItem("token", data.data.token);
+        dispatch({
+          type: LOGIN,
+          payload: {
+            user: data.data.user,
+            token: data.data.token,
+          },
+        });
+        onClose();
+      })
+      .catch((err) => {
+        console.error("Submission error:", err.message);
+        // If it's not a validation error (e.g., network failure), set a general error
+        if (err.message !== "Validation failed") {
+          setErrors({ general: "Network error. Please try again." });
+        }
+      });
   };
   return (
     <div className="relative w-115 bg-white flex flex-col justify-center items-center p-12.5 rounded-xl">

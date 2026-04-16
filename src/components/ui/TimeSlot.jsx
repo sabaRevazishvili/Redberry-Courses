@@ -1,45 +1,75 @@
-import React, { useState } from "react";
-import two from "../../assets/icons/two.svg";
-import arrow from "../../assets/icons/arrow.svg";
-import Morning from "../../assets/icons/morning.svg";
-import Afternoon from "../../assets/icons/afternoon.svg";
-import Evening from "../../assets/icons/evening.svg";
+import React, { useEffect, useState } from "react";
 
-const TIME_SLOTS = [
-  { id: 1, label: "Morning", time: "9:00 AM - 12:00 PM", icon: Morning },
-  { id: 2, label: "Afternoon", time: "12:00 AM - 6:00 PM", icon: Afternoon },
-  { id: 3, label: "Evening", time: "6:00 AM - 9:00 PM", icon: Evening },
-];
-
-const TimeSlot = () => {
+const TimeSlot = ({ courseId, weeklyScheduleId, setTimeSlotId }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState(null);
-  console.log(selected);
+  const [timeSlots, setTimeSlots] = useState([]);
+  const [, setLoading] = useState(true);
+  const [, setError] = useState(null);
+
+  useEffect(() => {
+    if (!weeklyScheduleId) return;
+    const fetchTimeSlots = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch(
+          `https://api.redclass.redberryinternship.ge/api/courses/${courseId}/time-slots?weekly_schedule_id=${weeklyScheduleId}`,
+          { headers: { accept: "application/json" } },
+        );
+        if (!response.ok) throw new Error(`Error: ${response.status}`);
+        const json = await response.json();
+        setTimeSlots(json.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTimeSlots();
+  }, [courseId, weeklyScheduleId]);
+
   return (
-    <div className="py-8 w-full flex flex-col justify-center items-start gap-6.5">
+    <div className="w-132.5 font-sans select-none">
       <div
-        className="w-full flex flex-row justify-between items-center cursor-pointer"
+        className="flex items-center justify-between cursor-pointer h-7.5"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <h3 className="flex flex-row justify-center items-center gap-2">
-          <img src={two} alt="2" />
-          Time Slot
-        </h3>
-        <img src={arrow} alt="Arrow" />
+        <div className="flex items-center gap-3">
+          <div className="w-6 h-6 rounded-full border border-gray-400 flex items-center justify-center text-gray-400 text-[12px] font-bold">
+            2
+          </div>
+          <h2 className="text-[18px] font-semibold text-gray-400">Time Slot</h2>
+        </div>
+        <svg
+          className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? "" : "-rotate-90"}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
       </div>
+
       {isOpen && (
-        <div className="flex justify-between items-center w-full">
-          {TIME_SLOTS.map((option) => (
+        <div className="flex gap-1.75 mt-4">
+          {timeSlots.map((slot) => (
             <div
-              key={option.id}
-              className="flex flex-row justify-center items-center gap-0.5 border border-border rounded-xl px-4 py-3"
-              onClick={() => setSelected(option.id)}
+              onClick={() => {
+                setTimeSlotId(slot.id);
+              }}
+              key={slot.label}
+              className="w-43 h-20 border border-gray-200 rounded-lg p-3 flex flex-col justify-center"
             >
-              <img src={option.icon} alt={option.label} />
-              <div>
-                <h4 className="text-sm">{option.label}</h4>
-                <p className="text-xs">{option.time}</p>
-              </div>
+              <span className="text-[14px] font-bold text-gray-700">
+                {slot.label}
+              </span>
+              <span className="text-[11px] text-gray-400">{slot.time}</span>
             </div>
           ))}
         </div>

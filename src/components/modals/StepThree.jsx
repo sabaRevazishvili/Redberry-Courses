@@ -1,14 +1,21 @@
-import React from "react";
+import React, { useRef } from "react";
 import upload from "../../assets/icons/upload.png";
 
 const StepThree = ({ formData, onSubmit }) => {
+  const fileRef = useRef(null);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new window.FormData(e.target);
+    const avatarFile = fileRef?.files[0];
 
     formData.set("username", data.get("username"));
-    formData.set("avatar", data.get("avatar")); // File object from input
 
+    if (avatarFile) {
+      formData.set("avatar", avatarFile);
+    } else {
+      formData.delete("avatar");
+    }
     onSubmit();
   };
 
@@ -38,7 +45,14 @@ const StepThree = ({ formData, onSubmit }) => {
             </p>
             <p className="text-xs text-textgrey">JPG, PNG or WebP</p>
           </div>
-          <input id="dropzone-file" type="file" className="hidden" />
+          <input
+            id="dropzone-file"
+            name="avatar"
+            ref={fileRef}
+            type="file"
+            className="hidden"
+            accept="image/jpeg,image/png,image/webp"
+          />
         </label>
       </div>
 

@@ -4,7 +4,7 @@ import browse from "../../assets/icons/browse.png";
 import enrolled from "../../assets/icons/enrolled.png";
 import { Link } from "react-router-dom";
 
-const AuthNavEl = ({ onProfileClick }) => {
+const AuthNavEl = ({ onProfileClick, onEnrollCoursesClick }) => {
   return (
     <ul className="flex flex-row justify-center items-center gap-7.5">
       <li>
@@ -17,13 +17,10 @@ const AuthNavEl = ({ onProfileClick }) => {
         </Link>
       </li>
       <li>
-        <Link
-          to="/enrolled"
-          className="text-xl flex flex-row items-center justify-center gap-2"
-        >
+        <button onClick={onEnrollCoursesClick} className="text-xl flex flex-row items-center justify-center gap-2">
           <img src={enrolled} />
           Enrolled Courses
-        </Link>
+        </button>
       </li>
       <li>
         <button onClick={onProfileClick}>

@@ -3,7 +3,7 @@ import FeaturedCourseCard from "./ui/FeaturedCourseCard";
 
 const FeaturedCourses = () => {
   const [courses, setCourses] = useState([]);
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
   const URL = "https://api.redclass.redberryinternship.ge/api/courses/featured";
   useEffect(() => {
     fetch(URL)
@@ -11,8 +11,6 @@ const FeaturedCourses = () => {
       .then((data) => setCourses(data.data))
       .catch((err) => setError(err.message));
   }, []);
-  console.log(courses);
-  console.log(error);
 
   return (
     <section className="py-16">

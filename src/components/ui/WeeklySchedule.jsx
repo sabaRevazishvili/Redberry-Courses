@@ -1,46 +1,80 @@
-import React, { useState } from "react";
-import one from "../../assets/icons/one.svg";
-import arrow from "../../assets/icons/arrow.svg";
+import React, { useState, useEffect } from "react";
 
-const SCHEDULE_OPTIONS = [
-  { id: 1, label: "Mon - Wed" },
-  { id: 2, label: "Tue - Thu" },
-  { id: 3, label: "Wed - Fri" },
-  { id: 4, label: "Weekend" },
-];
+const WeeklySchedule = ({ courseId, setWeeklyScheduleId }) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const [schedules, setSchedules] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-const WeeklySchedule = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState(null);
+  useEffect(() => {
+    const fetchSchedules = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch(
+          `https://api.redclass.redberryinternship.ge/api/courses/${courseId}/weekly-schedules`,
+          { headers: { accept: "application/json" } },
+        );
+        if (!response.ok) throw new Error(`Error: ${response.status}`);
+        const json = await response.json();
+        setSchedules(json.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchSchedules();
+  }, [courseId]);
   return (
-    <div className="w-full flex flex-col justify-center items-start gap-6.5">
+    <div className="w-132.5 font-sans select-none">
       <div
-        className="w-full flex flex-row justify-between items-center cursor-pointer"
+        className="flex items-center justify-between cursor-pointer h-7.5"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <h3 className="flex flex-row justify-center items-center gap-2">
-          <img src={one} alt="1" />
-          Weekly Schedule
-        </h3>
-        <img src={arrow} alt="Arrow" />
+        <div className="flex items-center gap-3">
+          <div className="w-6 h-6 rounded-full border border-[#1A1A60] flex items-center justify-center text-[#1A1A60] text-[12px] font-bold">
+            1
+          </div>
+          <h2 className="text-[18px] font-semibold text-[#1A1A60]">
+            Weekly Schedule
+          </h2>
+        </div>
+        <svg
+          className={`w-4 h-4 text-[#1A1A60] transition-transform ${isOpen ? "" : "-rotate-90"}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
       </div>
+
       {isOpen && (
-        <div className="flex justify-between items-center w-full">
-          {SCHEDULE_OPTIONS.map((option) => (
-            <button
-              key={option.id}
-              onClick={() => setSelected(option.id)}
-              className={`px-5 py-9 rounded-xl border text-base font-semibold transition-colors
-              ${
-                selected === option.id
-                  ? "bg-purple-600 text-white border-purple-600"
-                  : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
+        <div className="flex gap-1.75 mt-4">
+          {loading && (
+            <p className="text-sm text-gray-400">Loading schedules...</p>
+          )}
+          {error && <p className="text-sm text-red-400">{error}</p>}
+          {!loading &&
+            !error &&
+            schedules.map((schedule) => (
+              <div
+                onClick={() => {
+                  setWeeklyScheduleId(schedule.id);
+                }}
+                key={schedule.id}
+                className="w-31.75 h-25 border border-gray-200 rounded-lg flex items-center justify-center text-[14px] font-medium  text-gray-800"
+              >
+                {schedule.label}
+              </div>
+            ))}
         </div>
       )}
     </div>

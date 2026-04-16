@@ -4,23 +4,59 @@ import StepTwo from "./StepTwo";
 import StepThree from "./StepThree";
 import arrow from "../../assets/icons/arrow-down.png";
 import closeBttn from "../../assets/icons/x.png";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { LOGIN } from "../../context/actions";
 
 const RegisterModal = ({ onClose = () => {} }) => {
   const [step, setStep] = useState(1);
-  // Initialize a single FormData object to hold all values
   const [formData] = useState(new FormData());
+  const { dispatch } = useAuthContext();
+  const [, setErrors] = useState({});
 
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
+  const URL = "https://api.redclass.redberryinternship.ge/api/register";
+
   const handleFinalSubmit = () => {
-    // Log FormData entries for debugging
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
-    // Perform your API call here (e.g., fetch('/api/register', { method: 'POST', body: formData }))
-    // alert("Account Created Successfully!");
-    onClose();
+    setErrors({});
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: formData,
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then((err) => {
+            console.log("Validation Failed:", err.errors);
+            setErrors(err.errors || { general: err.message });
+            throw new Error("Validation failed");
+          });
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Success!", data);
+
+        localStorage.setItem("token", data.data.token);
+        dispatch({
+          type: LOGIN,
+          payload: {
+            user: data.data.user,
+            token: data.data.token,
+          },
+        });
+        onClose();
+      })
+      .catch((err) => {
+        console.error("Submission error:", err.message);
+        // If it's not a validation error (e.g., network failure), set a general error
+        if (err.message !== "Validation failed") {
+          setErrors({ general: "Network error. Please try again." });
+        }
+      });
   };
 
   const renderStep = () => {
@@ -43,7 +79,6 @@ const RegisterModal = ({ onClose = () => {} }) => {
         return <StepOne formData={formData} onNext={nextStep} />;
     }
   };
-
   return (
     <div className="relative bg-white w-115 flex flex-col justify-center items-center p-12.5 rounded-xl">
       <h2 className="font-semibold text-3xl">Create Account</h2>
